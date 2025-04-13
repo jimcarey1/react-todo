@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
+import {Routes, Route} from 'react-router-dom';
 
-import NewTodoForm from "./components/NewTodoForm";
-import TodoList from "./components/TodoList";
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
 
 function App() {
   const [todoText, setTodoText] = useState('');
@@ -12,8 +13,9 @@ function App() {
     if(todoText){
       setTodos((prev)=>{
        return [...prev, {id:crypto.randomUUID() ,title: todoText, isCompleted:false}]
-      })}
-    setTodoText('');
+      })
+      setTodoText('');
+    }
   }
 
   const handleToggleTodo = (id) => {
@@ -25,15 +27,24 @@ function App() {
   };
   
 
-  const handleDeletTodo = (id)=>{
+  const handleDeleteTodo = (id)=>{
     setTodos((prev)=>prev.filter(todo=>todo.id !== id))
   }
 
   return (
-    <div className="m-10 flex flex-col gap-5">
-      <h1 className="text-2xl">Todo App</h1>
-      <NewTodoForm handleAddTodo={handleAddTodo} todoText={todoText} setTodoText={setTodoText}/>
-      <TodoList todos={todos} handleToggleTodo={handleToggleTodo}/>
+    <div>
+      <Routes>
+        <Route path="/" 
+        element=
+        {<HomePage 
+        handleAddTodo={handleAddTodo} 
+        handleDeleteTodo={handleAddTodo} 
+        handleToggleTodo={handleToggleTodo} 
+        todos={todos} 
+        todoText = {todoText} 
+        setTodoText={setTodoText}/>} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
     </div>
   )
 }
