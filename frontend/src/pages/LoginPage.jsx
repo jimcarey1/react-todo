@@ -1,28 +1,19 @@
 import React, { useState } from 'react'
 import axios from 'axios';
+import { useAuth } from '../hooks/AuthProvider';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async (e)=>{
+  const auth = useAuth();
+  const handleLogin = (e)=>{
     e.preventDefault();
     if(username!=='' && password!==''){
-      const {data} = await 
-                     axios.post('http://localhost:8000/api/token/',
-                     {username:username, password:password},
-                     {headers:
-                      {'Content-Type': 'application/json'},
-                      withCredentials: true,
-                    },
-                    )
-      console.log(data);
-      localStorage.setItem('jwt', JSON.stringify(data));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data['access']}`;
-      window.location.href = '/'
+      auth.loginAction({username:username, password:password})
+      setUsername('');
+      setPassword('');
     }
-    setUsername('');
-    setPassword('');
   }
   return (
     <div>

@@ -3,10 +3,21 @@ import {Routes, Route} from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
+import AuthProvider from "./hooks/AuthProvider";
+import PrivateRoute from './utils/PrivateRoute';
+import getTodos from "./services/Todo";
 
 function App() {
   const [todoText, setTodoText] = useState('');
   const [todos, setTodos] = useState([]);
+
+  useEffect(()=>{
+    const todos = async ()=>{
+      const data = await getTodos();
+      setTodos(data);
+    }
+    todos();
+  },[])
 
   const handleAddTodo = (e)=>{
     e.preventDefault();
@@ -33,18 +44,23 @@ function App() {
 
   return (
     <div>
-      <Routes>
-        <Route path="/" 
-        element=
-        {<HomePage 
-        handleAddTodo={handleAddTodo} 
-        handleDeleteTodo={handleAddTodo} 
-        handleToggleTodo={handleToggleTodo} 
-        todos={todos} 
-        todoText = {todoText} 
-        setTodoText={setTodoText}/>} />
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route element={<PrivateRoute />}>
+            <Route path="/" 
+              element=
+              {<HomePage 
+              handleAddTodo={handleAddTodo} 
+              handleDeleteTodo={handleDeleteTodo} 
+              handleToggleTodo={handleToggleTodo} 
+              todos={todos} 
+              todoText = {todoText} 
+              setTodoText={setTodoText}/>} 
+            />
+          </Route>
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </AuthProvider>
     </div>
   )
 }
